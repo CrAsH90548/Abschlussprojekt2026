@@ -1,0 +1,28 @@
+# Python & Django Müll
+
+__pycache__/
+
+*.py[cod]
+
+*.log
+ 
+# Virtuelle Umgebung (RIESIG, nicht hochladen!)
+
+.venv/
+
+venv/
+
+env/
+ 
+# Deine Datenbank (Enthält Messwerte!)
+
+db.sqlite3
+ 
+# VS Code Einstellungen
+
+.vscode/
+ 
+# Umgebungsvariablen & Geheimnisse
+
+.env
+ 
