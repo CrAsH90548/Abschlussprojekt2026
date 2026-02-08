@@ -5,12 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Sensor-Dashboard</title>
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
   <style>
@@ -72,6 +70,10 @@
     .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     .btn{border:1px solid var(--border);background:linear-gradient(180deg,var(--card),#ffffff11);color:var(--text);padding:9px 12px;border-radius:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;box-shadow:var(--shadow);transition:transform .12s, box-shadow .12s, border-color .12s}
     .btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-lg);border-color:var(--ring)}
+    
+    /* NEU: Danger Style für Logout */
+    .btn.danger:hover{border-color:var(--err);color:var(--err);box-shadow:0 10px 20px rgba(239,68,68,0.15)}
+
     .btn.primary{background:linear-gradient(135deg,var(--primary),color-mix(in oklab,var(--primary),white 10%));color:#111;border-color:transparent}
     [data-theme="dark"] .btn.primary{color:#fff}
     .badge{display:inline-block;padding:3px 10px;border-radius:999px;background:#e5e7eb;color:#111827;font-size:12px}
@@ -139,12 +141,14 @@
         <button id="btn-theme-bvb" class="btn" type="button">🟡⚫ BVB</button>
         <button id="btn-theme-schalke" class="btn" type="button">🔵⚪ Schalke</button>
         <button id="btn-theme-frankfurt" class="btn" type="button">⚫️🔴 Frankfurt</button>
+        
         <button id="btn-settings" class="btn primary" type="button">⚙️ Einstellungen</button>
+        
+        <a href="/logout" class="btn danger" title="Abmelden">🚪 Logout</a>
       </div>
     </div>
 
     <div class="grid" role="main">
-      <!-- Raumklima -->
       <div class="card" id="card-air">
         <h2 id="air-title">🌤️ Raumklima</h2>
         <div class="qa" aria-label="Schnellaktionen">
@@ -159,7 +163,6 @@
         <div id="air-status" class="status muted">—</div>
       </div>
 
-      <!-- Wasser -->
       <div class="card" id="card-water">
         <h2 id="water-title">💧 Wassertemperatur</h2>
         <div class="qa" aria-label="Schnellaktionen">
@@ -203,7 +206,6 @@
     </div>
   </div>
 
-  <!-- Overlay & Drawer -->
   <div id="overlay" class="overlay" aria-hidden="true"></div>
   <div id="drawer" class="drawer" aria-label="Einstellungen" aria-hidden="true">
     <h3>⚙️ Einstellungen</h3>
