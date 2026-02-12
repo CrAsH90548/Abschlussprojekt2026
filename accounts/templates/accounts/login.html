@@ -1,51 +1,99 @@
 {% load static %}
+
 <!doctype html>
 <html lang="de">
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  
   <title>Login – Sensor-Dashboard</title>
+  
   <style>
+    /* ┌──────────────────────────────────────────────────────────────────────────┐
+    │  CSS: FARBEN & VARIABLEN                                                 │
+    └──────────────────────────────────────────────────────────────────────────┘
+    */
     :root {
-      --bg:#f3f4f6; --card:#ffffff; --text:#111827; --muted:#6b7280;
-      --primary:#2563eb; --err:#b91c1c; --border:#e5e7eb; --shadow:0 2px 10px rgba(0,0,0,.06);
+      /* Helles Theme (Standard) */
+      --bg:      #f3f4f6;
+      --card:    #ffffff;
+      --text:    #111827;
+      --muted:   #6b7280;
+      --primary: #2563eb;  /* Hauptfarbe Blau */
+      --err:     #b91c1c;  /* Fehlerfarbe Rot */
+      --border:  #e5e7eb;
+      --shadow:  0 2px 10px rgba(0,0,0,.06);
     }
+
+    /* Dunkles Theme (wird per data-theme="dark" aktiviert) */
     [data-theme="dark"] {
-      --bg:#0f172a; --card:#111827; --text:#e5e7eb; --muted:#94a3b8;
-      --primary:#60a5fa; --shadow:0 2px 10px rgba(0,0,0,.4); --border:#1f2937;
+      --bg:      #0f172a;
+      --card:    #111827;
+      --text:    #e5e7eb;
+      --muted:   #94a3b8;
+      --primary: #60a5fa;
+      --shadow:  0 2px 10px rgba(0,0,0,.4);
+      --border:  #1f2937;
     }
+
+    /* ┌──────────────────────────────────────────────────────────────────────────┐
+    │  CSS: LAYOUT (ZENTRIERUNG)                                               │
+    └──────────────────────────────────────────────────────────────────────────┘
+    */
     body {
       margin: 0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      
+      /* Farben anwenden */
       background: var(--bg);
       color: var(--text);
+      
+      /* Flexbox-Trick: Alles perfekt in die Mitte schieben */
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      height: 100vh; /* Volle Bildschirmhöhe */
     }
+
+    /* Die weiße Login-Karte */
     .card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 14px;
       box-shadow: var(--shadow);
       padding: 24px;
+      
+      /* Breite responsive gestalten */
       width: 100%;
       max-width: 380px;
     }
+
+    /* Überschrift */
     h1 {
       font-size: 20px;
       margin: 0 0 16px;
       text-align: center;
     }
+
+    /* ┌──────────────────────────────────────────────────────────────────────────┐
+    │  CSS: FORMULAR ELEMENTE                                                  │
+    └──────────────────────────────────────────────────────────────────────────┘
+    */
+    
+    /* Container für ein Eingabefeld */
     .field {
       margin-bottom: 16px;
     }
+
+    /* Beschriftung (Label) */
     .field label {
       display: block;
       font-size: 14px;
       margin-bottom: 6px;
     }
+
+    /* Eingabefeld (Input) */
     .field input {
       width: 100%;
       padding: 10px;
@@ -55,6 +103,13 @@
       background: transparent;
       color: var(--text);
     }
+
+    /* ┌──────────────────────────────────────────────────────────────────────────┐
+    │  CSS: BUTTONS & TEXTE                                                    │
+    └──────────────────────────────────────────────────────────────────────────┘
+    */
+
+    /* Haupt-Button (Login) */
     .btn {
       border: none;
       background: var(--primary);
@@ -68,6 +123,8 @@
       margin-top: 8px;
     }
     .btn:hover { opacity: 0.9; }
+
+    /* Theme-Button (oben links/rechts in der Karte) */
     .btn-theme {
       background: var(--card);
       color: var(--text);
@@ -76,12 +133,16 @@
       width: auto;
       margin-bottom: 12px;
     }
+
+    /* Kleingedrucktes (Cookie Hinweis) */
     .muted {
       color: var(--muted);
       font-size: 13px;
       text-align: center;
       margin-top: 16px;
     }
+
+    /* Fehlerliste (von Django generiert) */
     .errorlist {
       color: var(--err);
       margin: 0 0 12px;
@@ -89,6 +150,8 @@
       list-style: none;
       font-size: 14px;
     }
+
+    /* Links (Passwort vergessen etc.) */
     .links {
       text-align: center;
       margin-top: 16px;
@@ -102,21 +165,31 @@
     .links a:hover { text-decoration: underline; }
   </style>
 </head>
+
 <body>
+
   <div class="card">
+    
     <button id="btn-theme" class="btn btn-theme" type="button">🌓 Theme</button>
+    
     <h1>🔐 Login</h1>
+
     <form method="post">
+      
       {% csrf_token %}
+      
       {{ form.non_field_errors }}
+      
       <div class="field">
         <label for="id_username">E-Mail oder Username</label>
         <input type="text" name="username" id="id_username" required>
       </div>
+      
       <div class="field">
         <label for="id_password">Passwort</label>
         <input type="password" name="password" id="id_password" required>
       </div>
+      
       <button type="submit" class="btn">Einloggen</button>
     </form>
 
@@ -127,6 +200,7 @@
             <li>{{ error }}</li>
           {% endfor %}
         {% endfor %}
+        
         {% for error in form.non_field_errors %}
           <li>{{ error }}</li>
         {% endfor %}
@@ -145,19 +219,30 @@
   </div>
 
   <script>
-    (function(){
+    (function(){ // Kapselung (IIFE), damit Variablen nicht global sind
       const THEME_KEY = "login_theme";
+      
+      // 1. Theme laden (oder Standard "light" nehmen)
       let theme = localStorage.getItem(THEME_KEY) || "light";
 
+      // Hilfsfunktion: Setzt das Attribut im HTML
       function applyTheme(t){
         document.documentElement.setAttribute("data-theme", t==="dark" ? "dark" : "light");
       }
+      
+      // Beim Start einmal ausführen
       applyTheme(theme);
 
+      // 2. Klick-Event für den Button
       const btn = document.getElementById("btn-theme");
       btn.addEventListener("click", ()=>{
+        // Theme wechseln ( togglen )
         theme = (theme==="dark" ? "light" : "dark");
+        
+        // Neues Theme speichern
         localStorage.setItem(THEME_KEY, theme);
+        
+        // Anwenden
         applyTheme(theme);
       });
     })();

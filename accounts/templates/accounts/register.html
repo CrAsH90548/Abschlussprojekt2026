@@ -1,31 +1,109 @@
+{# ************************************************************************* #}
+{# * HAUPTKONFIGURATION UND VERERBUNG                                      * #}
+{# * Wir nutzen 'Template Inheritance' (Vererbung), um Codeduplikate zu    * #}
+{# * vermeiden. Diese Datei erbt das gesamte Layout von 'base_auth.html'.  * #}
+{# ************************************************************************* #}
+
+
+
+{# Wir erweitern das Basis-Template. Alles in dieser Datei wird in die #}
+{# entsprechenden Blöcke der 'accounts/base_auth.html' eingefügt. #}
 {% extends "accounts/base_auth.html" %}
+
+{# ************************************************************************* #}
+{# * SEITENTITEL DEFINIEREN                                                * #}
+{# * Dieser Block überschreibt den <title>-Tag im HTML-Head der Basisdatei.* #}
+{# ************************************************************************* #}
 {% block title %}Registrieren{% endblock %}
+
+{# ************************************************************************* #}
+{# * HAUPTINHALT DER SEITE                                                 * #}
+{# * Hier beginnt der eigentliche sichtbare Inhalt, der im <body> der      * #}
+{# * Basisdatei an der Stelle von {% block content %} angezeigt wird.      * #}
+{# ************************************************************************* #}
 {% block content %}
+
+  {# Einfache HTML-Überschrift für die Seite #}
   <h1>🆕 Account erstellen</h1>
+  
+  {# Ein erklärender Text mit einer CSS-Klasse 'muted' (vermutlich für graue/dezente Schrift) #}
   <p class="muted">Lege einen Account an, um das Sensor-Dashboard zu nutzen.</p>
 
+  {# *********************************************************************** #}
+  {# * REGISTRIERUNGS-FORMULAR                                             * #}
+  {# * method="post": Sendet Daten sicher im HTTP-Body (nicht in der URL). * #}
+  {# * novalidate: Schaltet die Browser-Standardvalidierung aus, da wir    * #}
+  {# * die Validierung von Django (Server-seitig) nutzen wollen.           * #}
+  {# *********************************************************************** #}
   <form method="post" novalidate>
+
+    {# SICHERHEITSKRITISCH: Erzeugt ein verstecktes Input-Feld mit einem Token. #}
+    {# Django prüft diesen Token beim Absenden, um CSRF-Attacken zu verhindern. #}
     {% csrf_token %}
+
+    
+
+    {# ********************************************************************* #}
+    {# * GLOBALE FEHLERANZEIGE                                             * #}
+    {# * Zeigt Fehler an, die nicht zu einem spezifischen Feld gehören     * #}
+    {# * (z.B. "Benutzer ist gesperrt" oder komplexe Logikfehler).         * #}
+    {# ********************************************************************* #}
     {{ form.non_field_errors }}
+
+    {# ********************************************************************* #}
+    {# * FORMULAR-FELDER                                                   * #}
+    {# * Hier werden die einzelnen Felder manuell gerendert, um volle      * #}
+    {# * Kontrolle über das Layout (divs, Klassen) zu haben.               * #}
+    {# ********************************************************************* #}
+
+    {# --- Feld: Benutzername --- #}
     <div class="field">
+      {# Das Label-Tag verknüpft den Text "Benutzername" mit dem Input-Feld #}
+      {# 'form.username.label' holt den Namen dynamisch aus der Python-Form-Definition #}
       <label for="id_username">{{ form.username.label }}</label>
-      {{ form.username }}{{ form.username.errors }}
+      
+      {# Rendert das eigentliche HTML-Input-Element (z.B. <input type="text">) #}
+      {{ form.username }}
+      
+      {# Zeigt Validierungsfehler speziell für dieses Feld an (z.B. "Name vergeben") #}
+      {{ form.username.errors }}
     </div>
+
+    {# --- Feld: E-Mail-Adresse --- #}
     <div class="field">
       <label for="id_email">{{ form.email.label }}</label>
-      {{ form.email }}{{ form.email.errors }}
+      {{ form.email }}
+      {# Fehlerbehandlung für ungültige E-Mail-Formate etc. #}
+      {{ form.email.errors }}
     </div>
+
+    {# --- Feld: Passwort (Erste Eingabe) --- #}
     <div class="field">
       <label for="id_password1">{{ form.password1.label }}</label>
-      {{ form.password1 }}{{ form.password1.errors }}
+      {# Django rendert hier automatisch ein <input type="password">, damit die Eingabe maskiert ist #}
+      {{ form.password1 }}
+      {{ form.password1.errors }}
     </div>
+
+    {# --- Feld: Passwort (Wiederholung zur Sicherheit) --- #}
     <div class="field">
       <label for="id_password2">{{ form.password2.label }}</label>
-      {{ form.password2 }}{{ form.password2.errors }}
+      {{ form.password2 }}
+      {# Hier erscheinen Fehler wie "Die Passwörter stimmen nicht überein" #}
+      {{ form.password2.errors }}
     </div>
+
+    {# ********************************************************************* #}
+    {# * AKTIONEN (BUTTONS & LINKS)                                        * #}
+    {# ********************************************************************* #}
     <div class="actions">
+      {# Link zurück zum Login, falls der Nutzer doch schon einen Account hat. #}
+      {# Der Template-Tag {% url ... %} generiert die korrekte URL dynamisch anhand des Namens 'login' #}
       <a class="btn" href="{% url 'accounts:login' %}">Zurück</a>
+      
+      {# Der Absende-Button. 'type="submit"' löst das Senden des Formulars an den Server aus #}
       <button type="submit" class="btn primary">Registrieren</button>
     </div>
+
   </form>
 {% endblock %}

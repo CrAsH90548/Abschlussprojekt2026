@@ -12,42 +12,71 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
   <style>
-    :root{
+    /* ###########################################################################
+    # CSS THEME-ENGINE & VARIABLEN
+    # Hier definiere ich das Herzstück des Designs. Durch CSS-Variablen 
+    # (--name) kann ich das gesamte Farbschema in Echtzeit austauschen.
+    ########################################################################### 
+    */
+    :root {
+      /* Standard-Theme (Hell): Ein freundlicher, heller Farbverlauf im Hintergrund */
       --bg-grad: radial-gradient(1200px 600px at 10% -10%, #a78bfa33, transparent 40%), linear-gradient(180deg, #eef2ff 0%, #f8fafc 60%);
-      --card:#ffffffea; --text:#0f172a; --muted:#64748b; --primary:#2563eb;
-      --ok:#10b981; --warn:#f59e0b; --err:#ef4444; --border:#e6e9f2cc; --ring:#93c5fd;
-      --shadow:0 10px 30px rgba(2,6,23,.06); --shadow-lg:0 24px 60px rgba(2,6,23,.16);
-      --radius:16px; --kpi-bg:#f1f5f944;
+      --card: #ffffffea;       /* Leicht transparenter Kartenhintergrund */
+      --text: #0f172a;         /* Dunkle Schrift für guten Kontrast */
+      --muted: #64748b;        /* Für weniger wichtige Infos (z.B. Zeitstempel) */
+      --primary: #2563eb;      /* Meine Hauptfarbe (Blau) für Aktionen */
+      
+      /* Status-Farben: Ampelsystem */
+      --ok: #10b981;           /* Alles gut (Grün) */
+      --warn: #f59e0b;         /* Warnung (Orange) */
+      --err: #ef4444;          /* Fehler (Rot) */
+      
+      --border: #e6e9f2cc;     /* Subtile Rahmen */
+      --ring: #93c5fd;         /* Fokus-Ring bei Buttons/Inputs */
+      
+      /* Schatten für Tiefe (3D-Effekt) */
+      --shadow: 0 10px 30px rgba(2,6,23,.06);
+      --shadow-lg: 0 24px 60px rgba(2,6,23,.16);
+      
+      --radius: 16px;          /* Abrundung der Ecken */
+      --kpi-bg: #f1f5f944;     /* Hintergrund für kleine Info-Badges */
     }
-    [data-theme="dark"]{
+
+    /* # DARK MODE 
+    # Wenn data-theme="dark" gesetzt ist, überschreibe ich die Variablen.
+    # Der Rest des CSS bleibt gleich!
+    */
+    [data-theme="dark"] {
       --bg-grad: radial-gradient(1200px 600px at 10% -10%, #5b21b655, transparent 40%), linear-gradient(180deg, #0b1220 0%, #0f172a 60%);
-      --card:#0b1220e6; --text:#e5e7eb; --muted:#94a3b8; --primary:#60a5fa;
-      --border:#1f2937cc; --ring:#60a5fa;
-      --shadow:0 12px 30px rgba(2,6,23,.35); --shadow-lg:0 28px 70px rgba(2,6,23,.65);
-      --kpi-bg:#0f172a99;
+      --card: #0b1220e6; --text: #e5e7eb; --muted: #94a3b8; --primary: #60a5fa;
+      --border: #1f2937cc; --ring: #60a5fa;
+      --shadow: 0 12px 30px rgba(2,6,23,.35); --shadow-lg: 0 28px 70px rgba(2,6,23,.65);
+      --kpi-bg: #0f172a99;
     }
-    [data-theme="pink"]{
+
+    /* Weitere Themes für Fußball-Fans ;) */
+    [data-theme="pink"] {
       --bg-grad: radial-gradient(1200px 600px at 10% -10%, #f472b633, transparent 40%), linear-gradient(180deg, #fdf2f8 0%, #fce7f3 60%);
       --card:#fff0f6; --text:#831843; --muted:#9d174d; --primary:#ec4899;
       --ok:#db2777; --warn:#b45309; --err:#be123c; --border:#f9a8d4; --ring:#f472b6;
       --shadow:0 10px 30px rgba(131,24,67,.12); --shadow-lg:0 24px 60px rgba(131,24,67,.22);
       --kpi-bg:#fce7f3c9;
     }
-    [data-theme="bvb"]{
+    [data-theme="bvb"] {
       --bg-grad: linear-gradient(180deg, #0b0b0f 0%, #111113 60%);
       --card:#0d0d10f2; --text:#f5f5f5; --muted:#cbd5e1; --primary:#FDE100;
       --ok:#22c55e; --warn:#fde047; --err:#ef4444; --border:#27272a; --ring:#fde047;
       --shadow:0 12px 30px rgba(0,0,0,.55); --shadow-lg:0 28px 70px rgba(0,0,0,.75);
       --kpi-bg: rgba(253,224,71,.08);
     }
-    [data-theme="schalke"]{
+    [data-theme="schalke"] {
       --bg-grad: linear-gradient(180deg, #0b1220 0%, #0d1b2a 60%);
       --card:#0e1730e6; --text:#e6f0ff; --muted:#9db4d6; --primary:#1D71B8;
       --ok:#10b981; --warn:#f59e0b; --err:#ef4444; --border:#152240; --ring:#60a5fa;
       --shadow:0 12px 30px rgba(8,20,40,.6); --shadow-lg:0 28px 70px rgba(8,20,40,.8);
       --kpi-bg: rgba(29,113,184,.10);
     }
-    [data-theme="frankfurt"]{
+    [data-theme="frankfurt"] {
       --bg-grad: linear-gradient(180deg, #0b0b0c 0%, #111113 60%);
       --card:#0d0d0ff2; --text:#f5f5f5; --muted:#cbd5e1; --primary:#E10600;
       --ok:#22c55e; --warn:#f59e0b; --err:#ef4444; --border:#202022; --ring:#ef4444;
@@ -55,75 +84,202 @@
       --kpi-bg: rgba(225,6,0,.10);
     }
 
-    *,*::before,*::after{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:var(--text);background:var(--bg-grad);background-attachment:fixed}
-    .shell{max-width:1240px;margin:0 auto;padding:clamp(16px,3vw,28px)}
+    /* ###########################################################################
+    # GLOBALES LAYOUT & RESET
+    ########################################################################### 
+    */
+    *, *::before, *::after { box-sizing: border-box; } /* Verhindert Padding-Probleme */
+    html, body { height: 100%; }
 
-    /* Fehlerbanner */
-    #errorbar{position:sticky;top:0;z-index:100;background:#fee2e2;color:#7f1d1d;border:1px solid #fecaca;border-radius:12px;padding:10px 12px;margin:12px 0;display:none}
-    [data-theme="dark"] #errorbar{background:#451a1a;color:#fecaca;border-color:#7f1d1d}
-
-    .topbar{position:sticky;top:12px;z-index:40;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:14px 16px;border:1px solid var(--border);background:var(--card);backdrop-filter:blur(12px);border-radius:22px;box-shadow:var(--shadow)}
-    .brand{display:flex;align-items:center;gap:12px}
-    .brand h1{margin:0;font-size:clamp(16px,1.8vw,20px)}
-    .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .btn{border:1px solid var(--border);background:linear-gradient(180deg,var(--card),#ffffff11);color:var(--text);padding:9px 12px;border-radius:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;box-shadow:var(--shadow);transition:transform .12s, box-shadow .12s, border-color .12s}
-    .btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-lg);border-color:var(--ring)}
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      color: var(--text);
+      background: var(--bg-grad);
+      background-attachment: fixed; /* Der Hintergrund bleibt beim Scrollen stehen */
+    }
     
-    /* NEU: Danger Style für Logout */
-    .btn.danger:hover{border-color:var(--err);color:var(--err);box-shadow:0 10px 20px rgba(239,68,68,0.15)}
+    /* Hauptcontainer, der den Inhalt zentriert und begrenzt */
+    .shell {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: clamp(16px, 3vw, 28px); /* Responsive Abstände */
+    }
 
-    .btn.primary{background:linear-gradient(135deg,var(--primary),color-mix(in oklab,var(--primary),white 10%));color:#111;border-color:transparent}
-    [data-theme="dark"] .btn.primary{color:#fff}
-    .badge{display:inline-block;padding:3px 10px;border-radius:999px;background:#e5e7eb;color:#111827;font-size:12px}
-    [data-theme="dark"] .badge{background:#1f2937;color:#e5e7eb}
+    /* Fehlerbanner (versteckt, bis JS es einblendet) */
+    #errorbar {
+      position: sticky; top: 0; z-index: 100;
+      background: #fee2e2; color: #7f1d1d;
+      border: 1px solid #fecaca; border-radius: 12px;
+      padding: 10px 12px; margin: 12px 0;
+      display: none;
+    }
+    [data-theme="dark"] #errorbar { background: #451a1a; color: #fecaca; border-color: #7f1d1d; }
 
-    .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(350px,1fr))}
-    .card{background:var(--card);border:1px solid var(--border);backdrop-filter:blur(12px);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
-    .card h2{margin:0 0 12px;font-size:18px}
-    .qa{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 12px 0} /* im Fluss, kein Overlay */
-    .row{display:flex;justify-content:space-between;align-items:center;margin:12px 0}
-    .value{font-size:clamp(28px,4vw,36px);font-weight:800}
-    .muted{color:var(--muted);font-size:13px}
-    .status{margin-top:12px;font-weight:700;display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:var(--kpi-bg)}
-    .status.ok{color:var(--ok)} .status.warn{color:var(--warn)} .status.err{color:var(--err)}
+    /* ###########################################################################
+    # NAVIGATION & BUTTONS
+    ########################################################################### 
+    */
+    /* Sticky Header mit "Milchglas"-Effekt (backdrop-filter) */
+    .topbar {
+      position: sticky; top: 12px; z-index: 40;
+      display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      backdrop-filter: blur(12px); /* Der Unschärfe-Effekt */
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand h1 { margin: 0; font-size: clamp(16px, 1.8vw, 20px); }
+    .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
-    .bar{width:100%;height:10px;background:linear-gradient(180deg,#e9eef7,#d9e2f6);border-radius:999px;overflow:hidden;border:1px solid var(--border)}
-    [data-theme="dark"] .bar{background:linear-gradient(180deg,#0f172a,#0b1220)}
-    [data-theme="pink"] .bar{background:linear-gradient(180deg,#fbcfe8,#fce7f3)}
-    [data-theme="bvb"] .bar{background:linear-gradient(180deg,#191919,#0f0f0f)}
-    .bar>span{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--primary) 0%,#22c55e 100%);transition:width .35s ease}
+    /* Button Basis-Styling */
+    .btn {
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--card), #ffffff11);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      box-shadow: var(--shadow);
+      transition: transform .12s, box-shadow .12s, border-color .12s;
+    }
+    .btn:hover {
+      transform: translateY(-1px); /* Leichtes Anheben */
+      box-shadow: var(--shadow-lg);
+      border-color: var(--ring);
+    }
+    
+    /* Logout-Button: Roter Warn-Effekt beim Hover */
+    .btn.danger:hover {
+      border-color: var(--err); color: var(--err);
+      box-shadow: 0 10px 20px rgba(239, 68, 68, 0.15);
+    }
 
-    table{width:100%;border-collapse:collapse;font-size:14px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
-    th,td{padding:10px 12px;border-bottom:1px solid var(--border)}
-    th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:12px;letter-spacing:.4px}
-    .footer{text-align:center;color:var(--muted);padding:28px 0}
+    /* Primär-Button (Hervorgehoben) */
+    .btn.primary {
+      background: linear-gradient(135deg, var(--primary), color-mix(in oklab, var(--primary), white 10%));
+      color: #111; border-color: transparent;
+    }
+    [data-theme="dark"] .btn.primary { color: #fff; }
 
-    /* Drawer & Overlay */
-    .overlay{position:fixed;inset:0;background:rgba(2,6,23,.35);opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:45}
-    .overlay.show{opacity:1;pointer-events:auto}
-    .drawer{position:fixed;right:0;top:0;height:100%;width:420px;max-width:92%;background:var(--card);color:var(--text);border-left:1px solid var(--border);
-      box-shadow:-10px 0 40px rgba(0,0,0,.25);transform:translateX(100%);transition:transform .25s ease;z-index:50;padding:18px;overflow:auto;pointer-events:none}
-    .drawer.open{transform:translateX(0);pointer-events:auto}
-    .drawer h3{margin:8px 0 12px}
-    .field{margin-bottom:12px}
-    .field label{display:block;font-size:13px;margin-bottom:6px}
-    .field input,.field select{width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;background:transparent;color:var(--text);
-      transition:border-color .15s ease,box-shadow .15s ease}
-    .field input:focus,.field select:focus{outline:none;border-color:var(--ring);box-shadow:0 0 0 3px color-mix(in oklab,var(--ring),transparent 70%)}
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; background: #e5e7eb; color: #111827; font-size: 12px; }
+    [data-theme="dark"] .badge { background: #1f2937; color: #e5e7eb; }
 
-    /* Buttons klein für QA */
-    .qa .btn{padding:6px 10px;border-radius:10px}
-    /* Toast */
-    #toast{position:fixed;bottom:16px;right:16px;z-index:100;background:var(--card);border:1px solid var(--border);padding:10px 12px;border-radius:12px;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);transition:.2s}
-    #toast.show{opacity:1;transform:translateY(0)}
+    /* ###########################################################################
+    # DASHBOARD GRID & KARTEN
+    ########################################################################### 
+    */
+    /* Das Grid-Layout: Automatische Spalten, aber mindestens 350px breit */
+    .grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    .card h2 { margin: 0 0 12px; font-size: 18px; }
+    
+    .qa { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 12px 0; }
+    .qa .btn { padding: 6px 10px; border-radius: 10px; } /* Kleinere Buttons in Karten */
+
+    .row { display: flex; justify-content: space-between; align-items: center; margin: 12px 0; }
+    .value { font-size: clamp(28px, 4vw, 36px); font-weight: 800; }
+    .muted { color: var(--muted); font-size: 13px; }
+
+    /* Statusanzeigen (Pille) */
+    .status {
+      margin-top: 12px; font-weight: 700;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 10px; border-radius: 999px;
+      border: 1px solid var(--border); background: var(--kpi-bg);
+    }
+    .status.ok { color: var(--ok); }
+    .status.warn { color: var(--warn); }
+    .status.err { color: var(--err); }
+
+    /* Fortschrittsbalken (Visuelle Anzeige des Wertes) */
+    .bar {
+      width: 100%; height: 10px;
+      background: linear-gradient(180deg, #e9eef7, #d9e2f6);
+      border-radius: 999px; overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    [data-theme="dark"] .bar { background: linear-gradient(180deg, #0f172a, #0b1220); }
+    [data-theme="pink"] .bar { background: linear-gradient(180deg, #fbcfe8, #fce7f3); }
+    [data-theme="bvb"] .bar { background: linear-gradient(180deg, #191919, #0f0f0f); }
+
+    /* Der innere Teil des Balkens (wird per JS animiert) */
+    .bar > span {
+      display: block; height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--primary) 0%, #22c55e 100%);
+      transition: width .35s ease;
+    }
+
+    .footer { text-align: center; color: var(--muted); padding: 28px 0; }
+
+    /* ###########################################################################
+    # SETTINGS DRAWER (Rechtes Menü)
+    ########################################################################### 
+    */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(2, 6, 23, .35); opacity: 0;
+      pointer-events: none; transition: opacity .2s ease; z-index: 45;
+    }
+    .overlay.show { opacity: 1; pointer-events: auto; }
+
+    .drawer {
+      position: fixed; right: 0; top: 0; height: 100%; width: 420px; max-width: 92%;
+      background: var(--card); color: var(--text);
+      border-left: 1px solid var(--border);
+      box-shadow: -10px 0 40px rgba(0, 0, 0, .25);
+      transform: translateX(100%); /* Standardmäßig ausgeblendet (rechts) */
+      transition: transform .25s ease; z-index: 50;
+      padding: 18px; overflow: auto; pointer-events: none;
+    }
+    .drawer.open { transform: translateX(0); pointer-events: auto; }
+    
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 13px; margin-bottom: 6px; }
+    .field input, .field select {
+      width: 100%; padding: 12px;
+      border: 1px solid var(--border); border-radius: 12px;
+      background: transparent; color: var(--text);
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .field input:focus, .field select:focus {
+      outline: none; border-color: var(--ring);
+      box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring), transparent 70%);
+    }
+
+    /* Toast (Kleine Nachricht unten rechts) */
+    #toast {
+      position: fixed; bottom: 16px; right: 16px; z-index: 100;
+      background: var(--card); border: 1px solid var(--border);
+      padding: 10px 12px; border-radius: 12px;
+      box-shadow: var(--shadow); opacity: 0;
+      transform: translateY(8px); transition: .2s;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
+  
   <noscript>
     <div style="margin:12px;padding:12px;border:1px solid #fecaca;background:#fee2e2;border-radius:12px;color:#7f1d1d">
-      JavaScript ist deaktiviert oder durch eine Content-Security-Policy blockiert. Bitte JS erlauben.
+      JavaScript ist deaktiviert. Bitte aktiviere JS, damit das Dashboard funktioniert.
     </div>
   </noscript>
 
@@ -149,14 +305,17 @@
     </div>
 
     <div class="grid" role="main">
+      
       <div class="card" id="card-air">
         <h2 id="air-title">🌤️ Raumklima</h2>
         <div class="qa" aria-label="Schnellaktionen">
           <button class="btn" data-action="refresh"     title="Jetzt aktualisieren">🔁 Aktualisieren</button>
           <button class="btn" data-action="export-csv"  data-target="air" title="CSV exportieren">📥 CSV</button>
         </div>
+
         <div class="row"><div>Temperatur</div><div class="value"><span id="air-temp">–</span> <span id="unit-air">°C</span></div></div>
         <div class="bar" aria-hidden="true"><span id="air-temp-bar"></span></div>
+
         <div class="row"><div>Luftfeuchtigkeit</div><div class="value"><span id="air-hum">–</span> %</div></div>
         <div class="bar" aria-hidden="true"><span id="air-hum-bar"></span></div>
         <div class="muted">Letztes Update: <span id="air-ts">–</span></div>
@@ -169,6 +328,7 @@
           <button class="btn" data-action="refresh"     title="Jetzt aktualisieren">🔁 Aktualisieren</button>
           <button class="btn" data-action="export-csv"  data-target="water" title="CSV exportieren">📥 CSV</button>
         </div>
+
         <div class="row"><div>Temperatur</div><div class="value"><span id="water-temp">–</span> <span id="unit-water">°C</span></div></div>
         <div class="bar" aria-hidden="true"><span id="water-temp-bar"></span></div>
         <div class="muted">Letztes Update: <span id="water-ts">–</span></div>
@@ -201,8 +361,7 @@
     </div>
 
     <div class="footer">
-      Aktualisierung alle <span id="lbl-poll">10</span>s • Warnung ab <span id="lbl-stale">30</span>s •
-      <span id="lbl-theme">Hell</span>-Modus
+      Aktualisierung alle <span id="lbl-poll">10</span>s • Warnung ab <span id="lbl-stale">30</span>s • <span id="lbl-theme">Hell</span>-Modus
     </div>
   </div>
 
@@ -213,10 +372,8 @@
     <div class="field"><label>API Basis-URL</label><input id="api-base" placeholder="z. B. http://192.168.178.34:8000" /></div>
     <div class="field"><label>Endpoint Raumklima (latest)</label><input id="ep-air" placeholder="/api/ingest" /></div>
     <div class="field"><label>Endpoint Wassertemperatur (latest)</label><input id="ep-water" placeholder="/api/ingest" /></div>
-
     <div class="field"><label>Sensor-Slug für Raumklima</label><input id="slug-air" placeholder="raum" /></div>
     <div class="field"><label>Sensor-Slug für Wasser</label><input id="slug-water" placeholder="wassertemp" /></div>
-
     <div class="field"><label>Polling-Intervall (Sek.)</label><input id="poll" type="number" min="3" max="3600" /></div>
     <div class="field"><label>„Daten veraltet“ ab (Sek.)</label><input id="stale" type="number" min="5" max="3600" /></div>
 
@@ -243,7 +400,7 @@
     </div>
 
     <div class="field">
-      <label><input id="matchday-enabled" type="checkbox" /> Matchday-Highlight aktivieren (automatisch am Wochenende)</label>
+      <label><input id="matchday-enabled" type="checkbox" /> Matchday-Highlight aktivieren</label>
     </div>
 
     <button id="btn-save" class="btn primary" style="width:100%" type="button">Speichern</button>
@@ -252,15 +409,24 @@
   <div id="toast" role="status" aria-live="polite"></div>
 
   <script>
+  /*
+    ###########################################################################
+    # JAVASCRIPT LOGIK
+    # Alles gekapselt in einer IIFE, um Konflikte zu vermeiden.
+    ###########################################################################
+  */
   (function(){
     'use strict';
 
-    // Helpers
+    // Kleine Helfer, damit ich nicht immer document.getElementById tippen muss
     const $ = (id) => document.getElementById(id);
     const on = (el, ev, fn) => el && el.addEventListener(ev, fn);
 
-    // Error banner
+    // -------------------------------------------------------------------------
+    // ERROR HANDLING & TOASTS
+    // -------------------------------------------------------------------------
     const errbar = $('errorbar');
+    
     function showError(msg){
       try{
         if(!errbar) return;
@@ -270,20 +436,22 @@
         console.error('[Dashboard]', msg);
       }catch{}
     }
+    // Ich fange globale Fehler ab, damit der User wenigstens eine Meldung sieht
     window.addEventListener('error', (e)=> showError(e.message || String(e)));
     window.addEventListener('unhandledrejection', (e)=> showError((e.reason && e.reason.message) || String(e.reason || e)));
 
-    // Toast
     function showToast(msg){
       const t = $('toast'); if(!t) return;
       t.textContent = msg; t.classList.add('show');
-      setTimeout(()=> t.classList.remove('show'), 1800);
+      setTimeout(()=> t.classList.remove('show'), 1800); // Nach 1.8s ausblenden
     }
 
-    // SETTINGS early
+    // -------------------------------------------------------------------------
+    // SETTINGS & LOCALSTORAGE
+    // -------------------------------------------------------------------------
     let SETTINGS = null;
     const DEFAULTS = {
-      apiBase: window.location.origin,
+      apiBase: window.location.origin, // Nutzt die aktuelle Domain als Standard
       epAir:   "/api/ingest/",
       epWater: "/api/ingest/",
       pollSec: 10,
@@ -296,41 +464,58 @@
       matchdayEnabled: true,
       theme: "light"
     };
+    
+    // Ich lade Einstellungen aus dem Browser-Speicher, falls vorhanden
     function loadSettings(){
       try { return { ...DEFAULTS, ...JSON.parse(localStorage.getItem("settings_with_admin")||"{}") }; }
       catch { return { ...DEFAULTS }; }
     }
     function saveSettings(s){ try{ localStorage.setItem("settings_with_admin", JSON.stringify(s)); }catch{} }
 
-    // Theme
+    // -------------------------------------------------------------------------
+    // THEME LOGIC
+    // -------------------------------------------------------------------------
     const THEME_KEY="sd_theme";
+    
     function applyTheme(theme){
       const allowed = ["light","dark","pink","bvb","schalke","frankfurt"];
       const t = allowed.includes(theme) ? theme : "light";
+      
+      // Ich setze das Attribut am HTML-Tag -> CSS reagiert sofort
       document.documentElement.setAttribute("data-theme", t);
       try{ localStorage.setItem(THEME_KEY, t); }catch{}
+      
+      // Update Label im Footer
       const map = {light:"Hell",dark:"Dunkel",pink:"Pink",bvb:"BVB",schalke:"Schalke",frankfurt:"Frankfurt"};
       const lbl = $('lbl-theme'); if(lbl) lbl.textContent = map[t] || "Hell";
+      
+      // Auch die Charts müssen ihre Farben aktualisieren
       updateChartTheme();
       updateMatchday();
     }
+    
     function isWeekend(){ const d=new Date().getDay(); return d===0||d===6; }
     function isTeamTheme(t){ return ["bvb","schalke","frankfurt"].includes(t); }
+    
     function updateMatchday(){
       const t = (()=>{
         try{ return localStorage.getItem(THEME_KEY) || "light"; }catch{ return "light"; }
       })();
+      // Logik für Matchday-Highlight (noch kein visuelles Element dafür im HTML, aber vorbereitet)
       const enabled = (SETTINGS?.matchdayEnabled !== false) && isWeekend() && isTeamTheme(t);
-      const badge = $('matchday-badge');
-      if(badge){ badge.hidden = !enabled; }
     }
 
-    // Charts & series
+    // -------------------------------------------------------------------------
+    // CHART.JS SETUP
+    // -------------------------------------------------------------------------
     const series = { air:{ labels:[], temp:[], hum:[] }, water:{ labels:[], temp:[] } };
     let chartAirTemp=null, chartAirHum=null, chartWater=null;
-    const MAX_POINTS = 60;
+    const MAX_POINTS = 60; // Ich zeige maximal 60 Punkte an, damit es übersichtlich bleibt
+    
     function pushPoint(arr, val){ arr.push(val); if(arr.length>MAX_POINTS) arr.shift(); }
+    
     function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+    
     function chartColors(){
       const theme = document.documentElement.getAttribute('data-theme');
       let grid = '#e5e7eb';
@@ -339,34 +524,56 @@
       if(theme==='bvb') grid = '#27272a';
       if(theme==='schalke') grid = '#19335a';
       if(theme==='frankfurt') grid = '#2c2c2e';
-      return { text: cssVar("--text") || "#0f172a", grid, primary: cssVar("--primary") || "#2563eb", ok: cssVar("--ok") || "#10b981" };
+
+      return { 
+        text: cssVar("--text") || "#0f172a", 
+        grid, 
+        primary: cssVar("--primary") || "#2563eb", 
+        ok: cssVar("--ok") || "#10b981" 
+      };
     }
+
     function gradient(ctx){
       const g = ctx.createLinearGradient(0,0,0,200);
       const c = cssVar('--primary') || '#2563eb';
       g.addColorStop(0, c+'55'); g.addColorStop(1, c+'00');
       return g;
     }
+    
     function makeCharts(){
       try{
         const ChartJs = window.Chart;
         if(!ChartJs){ console.warn('Chart.js noch nicht geladen.'); return; }
         const c = chartColors();
+        
+        // Kontext holen
         const ctxAirTemp = $('chart-air-temp')?.getContext('2d');
         const ctxAirHum  = $('chart-air-hum') ?.getContext('2d');
         const ctxWater   = $('chart-water-temp')?.getContext('2d');
         if(!ctxAirTemp || !ctxAirHum || !ctxWater) return;
 
+        // Chart 1: Luft Temperatur
         chartAirTemp = new ChartJs(ctxAirTemp,{
           type:'line',
-          data:{ labels:series.air.labels, datasets:[{ label:'Temperatur', data:series.air.temp, borderColor:c.primary, backgroundColor:gradient(ctxAirTemp), tension:.35, fill:true, pointRadius:0, borderWidth:2 }]},
+          data:{ 
+            labels:series.air.labels, 
+            datasets:[{ 
+              label:'Temperatur', data:series.air.temp, 
+              borderColor:c.primary, backgroundColor:gradient(ctxAirTemp), 
+              tension:.35, fill:true, pointRadius:0, borderWidth:2 
+            }]
+          },
           options:{ responsive:true, animation:false, plugins:{legend:{labels:{color:c.text}}}, scales:{ x:{ticks:{color:c.text},grid:{color:c.grid}}, y:{ticks:{color:c.text},grid:{color:c.grid}}}}
         });
+
+        // Chart 2: Luftfeuchte (Bar)
         chartAirHum = new ChartJs(ctxAirHum,{
           type:'bar',
           data:{ labels:series.air.labels, datasets:[{ label:'Luftfeuchtigkeit (%)', data:series.air.hum, backgroundColor:c.ok }]},
           options:{ responsive:true, animation:false, plugins:{legend:{labels:{color:c.text}}}, scales:{ x:{ticks:{color:c.text},grid:{color:c.grid}}, y:{ticks:{color:c.text},grid:{color:c.grid}, suggestedMin:0, suggestedMax:100}}}
         });
+
+        // Chart 3: Wasser
         chartWater = new ChartJs(ctxWater,{
           type:'line',
           data:{ labels:series.water.labels, datasets:[{ label:'Wassertemperatur', data:series.water.temp, borderColor:c.primary, backgroundColor:gradient(ctxWater), tension:.35, fill:true, pointRadius:0, borderWidth:2 }]},
@@ -374,6 +581,8 @@
         });
       }catch(e){ showError('Charts: '+e.message); }
     }
+    
+    // Wenn sich das Theme ändert, muss ich die Charts updaten
     function updateChartTheme(){
       if(!chartAirTemp || !chartAirHum || !chartWater) return;
       try{
@@ -387,12 +596,14 @@
           } else {
             ch.data.datasets.forEach(ds => { ds.backgroundColor = c.ok; });
           }
-          ch.update('none');
+          ch.update('none'); // Update ohne Animation
         });
       }catch(e){ showError('updateChartTheme: '+e.message); }
     }
 
-    // Fetch helpers
+    // -------------------------------------------------------------------------
+    // DATEN FETCHEN & VERARBEITEN
+    // -------------------------------------------------------------------------
     function buildUrl(ep){
       const base=(SETTINGS?.apiBase||DEFAULTS.apiBase).replace(/\/+$/,"");
       const path=ep.startsWith("/")? ep : "/"+ep;
@@ -405,23 +616,30 @@
     }
     function celsiusToF(v){ return (v*9/5)+32 }
     function fmtTempNum(v){ if(v==null || isNaN(v)) return null; return (SETTINGS?.unit==="F") ? celsiusToF(Number(v)) : Number(v); }
-    function timeLabel(ts){ try{ const d = ts? new Date(ts) : new Date(); return d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}catch{ return new Date().toLocaleTimeString(); } }
+    
+    // Zeitstempel formatieren
+    function timeLabel(ts){ 
+      try{ const d = ts? new Date(ts) : new Date(); return d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+      catch{ return new Date().toLocaleTimeString(); } 
+    }
+    
+    // Die width des Balkens berechnen
     function setBarPercent(el, value, min, max){
       if(!el || value==null || isNaN(value)){ if(el) el.style.width="0%"; return; }
       const pct=Math.max(0, Math.min(100, ((Number(value)-min)/(max-min))*100)); el.style.width=pct+"%";
     }
 
-    // Polling (nur regulär; kein Pause-Feature mehr)
+    // Polling Loop
     let pollTimer=null;
     function restartPolling(){
       try{
         if(pollTimer) clearInterval(pollTimer);
-        pollOnce();
+        pollOnce(); // Sofort einmal ausführen
         pollTimer = setInterval(pollOnce, (SETTINGS.pollSec||10)*1000);
       }catch(e){ showError('restartPolling: '+e.message); }
     }
 
-    // CSV-Export
+    // CSV Export
     function exportCSVFor(target){
       let rows = [['Zeit','Wert1','Wert2']];
       if(target==='air'){
@@ -434,6 +652,7 @@
         );
       }else return;
 
+      // CSV erstellen und Download auslösen
       const csv = rows.map(r=> r.map(v=> `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
       const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
       const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
@@ -441,11 +660,13 @@
       a.click();
     }
 
-    // DOM Ready
+    // -------------------------------------------------------------------------
+    // INIT (STARTPUNKT)
+    // -------------------------------------------------------------------------
     document.addEventListener('DOMContentLoaded', () => {
       SETTINGS = loadSettings();
 
-      // Labels
+      // UI Labels setzen
       $('lbl-poll').textContent  = SETTINGS.pollSec;
       $('lbl-stale').textContent = SETTINGS.staleSec;
       $('unit-air').textContent  = SETTINGS.unit==="F" ? "°F" : "°C";
@@ -453,13 +674,13 @@
       $('air-title').textContent   = "🌤️ " + SETTINGS.aliasAir   + (SETTINGS.slugAir ? " ("+SETTINGS.slugAir+")" : "");
       $('water-title').textContent = "💧 " + SETTINGS.aliasWater + (SETTINGS.slugWater ? " ("+SETTINGS.slugWater+")" : "");
 
-      // Theme init
+      // Theme laden
       const initialTheme = SETTINGS.theme || (()=>{
         try{ return localStorage.getItem(THEME_KEY); }catch{ return null; }
       })() || (matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       applyTheme(initialTheme);
 
-      // Topbar Actions
+      // Event Listener für Buttons
       on($('btn-theme-light'),"click",()=>applyTheme("light"));
       on($('btn-theme-dark'),"click",()=>applyTheme("dark"));
       on($('btn-theme-pink'),"click",()=>applyTheme("pink"));
@@ -467,12 +688,12 @@
       on($('btn-theme-schalke'),"click",()=>applyTheme("schalke"));
       on($('btn-theme-frankfurt'),"click",()=>applyTheme("frankfurt"));
 
-      // Settings button + overlay + ESC
+      // Settings Drawer (Auf/Zu)
       on($('btn-settings'), 'click', ()=> toggleDrawer(true));
       on($('overlay'), 'click', ()=> toggleDrawer(false));
       document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') toggleDrawer(false); });
 
-      // Drawer Prefill
+      // Settings Inputs füllen
       $('api-base').value   = SETTINGS.apiBase;
       $('ep-air').value     = SETTINGS.epAir;
       $('ep-water').value   = SETTINGS.epWater;
@@ -486,8 +707,9 @@
       $('theme-select').value = (localStorage.getItem(THEME_KEY) || SETTINGS.theme || "light");
       $('matchday-enabled').checked = (SETTINGS.matchdayEnabled !== false);
 
-      // Drawer Save
+      // Save Button
       on($('btn-save'), 'click', ()=>{
+        // Werte aus Inputs lesen
         SETTINGS.apiBase   = $('api-base').value.trim() || DEFAULTS.apiBase;
         SETTINGS.epAir     = $('ep-air').value.trim()   || DEFAULTS.epAir;
         SETTINGS.epWater   = $('ep-water').value.trim() || DEFAULTS.epWater;
@@ -503,6 +725,8 @@
 
         saveSettings(SETTINGS);
         applyTheme(SETTINGS.theme);
+        
+        // UI aktualisieren
         $('unit-air').textContent   = SETTINGS.unit==="F" ? "°F" : "°C";
         $('unit-water').textContent = SETTINGS.unit==="F" ? "°F" : "°C";
         $('air-title').textContent   = "🌤️ " + SETTINGS.aliasAir   + (SETTINGS.slugAir ? " ("+SETTINGS.slugAir+")" : "");
@@ -515,16 +739,15 @@
         showToast('✅ Einstellungen gespeichert');
       });
 
-      // Charts + Polling
       makeCharts();
       restartPolling();
-      // Re-theme → Charts updaten
+      
+      // Klick auf Theme-Buttons updated auch die Charts
       ["btn-theme-light","btn-theme-dark","btn-theme-pink","btn-theme-bvb","btn-theme-schalke","btn-theme-frankfurt"]
         .forEach(id=> on($(id),"click", ()=> setTimeout(updateChartTheme, 0)));
       setInterval(updateMatchday, 60*60*1000);
     });
 
-    // Drawer helper
     function toggleDrawer(open){
       const drawer=$('drawer'), overlay=$('overlay');
       if(!drawer||!overlay) return;
@@ -534,7 +757,7 @@
       overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
     }
 
-    // Quick Action Events (Delegation)
+    // Quick Action Handler (Delegation)
     document.addEventListener('click', (e)=>{
       const btn = e.target.closest('.qa .btn'); if(!btn) return;
       const action = btn.getAttribute('data-action');
@@ -542,21 +765,26 @@
       if(action==='export-csv')  { exportCSVFor(btn.getAttribute('data-target')); }
     });
 
-    // Poll Once
+    // -------------------------------------------------------------------------
+    // POLL ONCE: Die Haupt-Funktion zum Datenholen
+    // -------------------------------------------------------------------------
     async function pollOnce(){
       try{
         const airUrl   = buildUrl(SETTINGS.epAir)   + "?slug=" + encodeURIComponent(SETTINGS.slugAir||"raum");
         const waterUrl = buildUrl(SETTINGS.epWater) + "?slug=" + encodeURIComponent(SETTINGS.slugWater||"wassertemp");
+        
+        // Ich lade beide Sensoren parallel, das spart Zeit
         const [air, water] = await Promise.all([
           getJson(airUrl).catch(e=>{ showError('AIR '+e.message); return null; }),
           getJson(waterUrl).catch(e=>{ showError('WATER '+e.message); return null; })
         ]);
 
-        // AIR
+        // DATEN FÜR SENSOR 1 (AIR) VERARBEITEN
         if(air){
           const tNum = fmtTempNum(air.temperature);
           const hNum = (air.humidity==null? null : Number(air.humidity));
           const lbl  = timeLabel(air.timestamp);
+          
           if(tNum!=null){
             pushPoint(series.air.labels, lbl);
             pushPoint(series.air.temp, tNum);
@@ -564,20 +792,24 @@
             chartAirTemp && chartAirTemp.update('none');
             chartAirHum  && chartAirHum.update('none');
           }
+          // Texte und Balken updaten
           $('air-temp').textContent = (tNum==null? '–' : tNum.toFixed(1));
           $('air-hum').textContent  = (hNum==null? '–' : Math.round(hNum));
           setBarPercent($('air-temp-bar'), air.temperature, -10, 40);
           setBarPercent($('air-hum-bar'),  air.humidity, 0, 100);
+          
           if(air.timestamp){
             const t=new Date(air.timestamp); $('air-ts').textContent=t.toLocaleString('de-DE');
             const age=(Date.now()-t.getTime())/1000;
             const st=$('air-status');
+            
+            // Prüfung: Sind die Daten zu alt?
             if(age>SETTINGS.staleSec){ st.textContent="⚠ Daten älter als "+SETTINGS.staleSec+" s"; st.className="status warn"; }
             else { st.textContent="✅ Daten aktuell"; st.className="status ok"; }
           }
         }
 
-        // WATER
+        // DATEN FÜR SENSOR 2 (WATER) VERARBEITEN
         if(water){
           const wNum = fmtTempNum(water.temperature);
           const lblW = timeLabel(water.timestamp);

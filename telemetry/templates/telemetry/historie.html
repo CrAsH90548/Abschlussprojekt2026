@@ -1,446 +1,641 @@
 <!doctype html>
 <html lang="de" data-theme="light">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Sensor-Daten • Historie</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Sensor-Daten • Historie</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-  <style>
-    :root{
-      --bg-grad: radial-gradient(1200px 600px at 10% -10%, #a78bfa33, transparent 40%), linear-gradient(180deg, #eef2ff 0%, #f8fafc 60%);
-      --card:#ffffffea; --text:#0f172a; --muted:#64748b; --primary:#2563eb;
-      --ok:#10b981; --warn:#f59e0b; --err:#ef4444; --border:#e6e9f2cc; --ring:#93c5fd;
-      --shadow:0 10px 30px rgba(2,6,23,.06); --shadow-lg:0 24px 60px rgba(2,6,23,.16);
-    }
-    [data-theme="dark"]{
-      --bg-grad: radial-gradient(1200px 600px at 10% -10%, #5b21b655, transparent 40%), linear-gradient(180deg, #0b1220 0%, #0f172a 60%);
-      --card:#0b1220e6; --text:#e5e7eb; --muted:#94a3b8; --primary:#60a5fa;
-      --border:#1f2937cc; --ring:#60a5fa;
-      --shadow:0 12px 30px rgba(2,6,23,.35); --shadow-lg:0 28px 60px rgba(2,6,23,.55);
-    }
-    [data-theme="pink"]{
-      --bg-grad: radial-gradient(1200px 600px at 10% -10%, #f472b633, transparent 40%), linear-gradient(180deg, #fdf2f8 0%, #fce7f3 60%);
-      --card:#fff0f6; --text:#831843; --muted:#9d174d; --primary:#ec4899;
-      --ok:#db2777; --warn:#b45309; --err:#be123c; --border:#f9a8d4; --ring:#f472b6;
-      --shadow:0 10px 30px rgba(131,24,67,.12); --shadow-lg:0 24px 60px rgba(131,24,67,.22);
-    }
-    [data-theme="bvb"]{
-      --bg-grad: linear-gradient(180deg, #0b0b0f 0%, #111113 60%);
-      --card:#0d0d10f2; --text:#f5f5f5; --muted:#cbd5e1; --primary:#FDE100;
-      --ok:#22c55e; --warn:#fde047; --err:#ef4444; --border:#27272a; --ring:#fde047;
-      --shadow:0 12px 30px rgba(0,0,0,.55); --shadow-lg:0 28px 70px rgba(0,0,0,.75);
-    }
-    [data-theme="schalke"]{
-      --bg-grad: linear-gradient(180deg, #0b1220 0%, #0d1b2a 60%);
-      --card:#0e1730e6; --text:#e6f0ff; --muted:#9db4d6; --primary:#1D71B8;
-      --ok:#10b981; --warn:#f59e0b; --err:#ef4444; --border:#152240; --ring:#60a5fa;
-      --shadow:0 12px 30px rgba(8,20,40,.6); --shadow-lg:0 28px 70px rgba(8,20,40,.8);
-    }
-    [data-theme="frankfurt"]{
-      --bg-grad: linear-gradient(180deg, #0b0b0c 0%, #111113 60%);
-      --card:#0d0d0ff2; --text:#f5f5f5; --muted:#cbd5e1; --primary:#E10600;
-      --ok:#22c55e; --warn:#f59e0b; --err:#ef4444; --border:#202022; --ring:#ef4444;
-      --shadow:0 12px 30px rgba(0,0,0,.6); --shadow-lg:0 28px 70px rgba(0,0,0,.8);
+    <style>
+    /* ###########################################################################
+    # CSS THEME-ENGINE & VARIABLES                                           #
+    # Hier definiere ich das Herzstück des Designs. Durch CSS-Variablen      #
+    # (--name) kann ich das gesamte Farbschema in Echtzeit austauschen.      #
+    ########################################################################### 
+    */
+    :root {
+        /* Standard-Theme (Light): Ein freundlicher, heller Farbverlauf */
+        --bg-grad: radial-gradient(1200px 600px at 10% -10%, #a78bfa33, transparent 40%), linear-gradient(180deg, #eef2ff 0%, #f8fafc 60%);
+        --card: #ffffffea;       /* Leicht transparenter Kartenhintergrund */
+        --text: #0f172a;         /* Dunkles Blau-Grau für gute Lesbarkeit */
+        --muted: #64748b;        /* Für weniger wichtige Infos */
+        --primary: #2563eb;      /* Hauptfarbe für Aktionen */
+        --ok: #10b981; --warn: #f59e0b; --err: #ef4444; /* Statusfarben */
+        --border: #e6e9f2cc;     /* Subtile Rahmen */
+        --ring: #93c5fd;         /* Fokus-Ring bei Eingabefeldern */
+        --shadow: 0 10px 30px rgba(2,6,23,.06); 
+        --shadow-lg: 0 24px 60px rgba(2,6,23,.16);
     }
 
-    *,*::before,*::after{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--text);background:var(--bg-grad);background-attachment:fixed}
-    .shell{max-width:1240px;margin:0 auto;padding:clamp(16px,3vw,28px)}
-
-    .topbar{position:sticky;top:12px;z-index:20;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;
-      padding:14px 16px;border:1px solid var(--border);background:var(--card);border-radius:22px;box-shadow:var(--shadow);backdrop-filter:blur(10px)}
-    .brand{display:flex;align-items:center;gap:12px}
-    .brand h1{margin:0;font-size:clamp(16px,1.8vw,20px)}
-    .actions{display:flex;gap:8px;flex-wrap:wrap}
-    .btn{border:1px solid var(--border);background:linear-gradient(180deg,var(--card),#ffffff11);color:var(--text);padding:8px 12px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:var(--shadow);transition:border-color .1s}
-    .btn:hover{border-color:var(--ring)}
-    .btn.primary{background:linear-gradient(135deg,var(--primary),color-mix(in oklab,var(--primary),white 10%));color:#111;border-color:transparent}
-    [data-theme="dark"] .btn.primary{color:#fff}
-    .muted{color:var(--muted)}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:16px}
-
-    .filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0}
-    .filters .field{display:flex;flex-direction:column;gap:6px}
-    .filters input,.filters select{padding:10px;border:1px solid var(--border);border-radius:10px;background:transparent;color:var(--text)}
-    .filters input:focus,.filters select:focus{outline:none;border-color:var(--ring);box-shadow:0 0 0 3px color-mix(in oklab,var(--ring),transparent 70%)}
-
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
-    th{font-weight:600;color:var(--muted);text-transform:uppercase;font-size:12px;letter-spacing:.4px;position:sticky;top:0;background:var(--card);z-index:1}
-    tbody tr:hover{background:rgba(0,0,0,0.02)}
-    [data-theme="dark"] tbody tr:hover{background:rgba(255,255,255,0.03)}
-
-    .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-    .spacer{flex:1 1 auto}
-    .pagination{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-    .count{font-size:12px}
-
-    #errorbar{display:none;margin:12px 0;padding:10px;border:1px solid #fecaca;background:#fee2e2;border-radius:12px;color:#7f1d1d}
-
-    @media (max-width:420px){
-      .actions .btn{flex:1 1 auto;justify-content:center}
+    /* # DARK MODE 
+    # Ich überschreibe nur die Variablen, die sich ändern müssen.
+    */
+    [data-theme="dark"] {
+        --bg-grad: radial-gradient(1200px 600px at 10% -10%, #5b21b655, transparent 40%), linear-gradient(180deg, #0b1220 0%, #0f172a 60%);
+        --card: #0b1220e6; --text: #e5e7eb; --muted: #94a3b8; --primary: #60a5fa;
+        --border: #1f2937cc; --ring: #60a5fa;
+        --shadow: 0 12px 30px rgba(2,6,23,.35); 
+        --shadow-lg: 0 28px 60px rgba(2,6,23,.55);
     }
-  </style>
+
+    /* Weitere Themes (Pink, BVB, Schalke, Frankfurt) funktionieren nach demselben Prinzip */
+    [data-theme="pink"] {
+        --bg-grad: radial-gradient(1200px 600px at 10% -10%, #f472b633, transparent 40%), linear-gradient(180deg, #fdf2f8 0%, #fce7f3 60%);
+        --card:#fff0f6; --text:#831843; --muted:#9d174d; --primary:#ec4899;
+        --ok:#db2777; --warn:#b45309; --err:#be123c; --border:#f9a8d4; --ring:#f472b6;
+        --shadow:0 10px 30px rgba(131,24,67,.12); --shadow-lg:0 24px 60px rgba(131,24,67,.22);
+    }
+    [data-theme="bvb"] {
+        --bg-grad: linear-gradient(180deg, #0b0b0f 0%, #111113 60%);
+        --card:#0d0d10f2; --text:#f5f5f5; --muted:#cbd5e1; --primary:#FDE100;
+        --ok:#22c55e; --warn:#fde047; --err:#ef4444; --border:#27272a; --ring:#fde047;
+        --shadow:0 12px 30px rgba(0,0,0,.55); --shadow-lg:0 28px 70px rgba(0,0,0,.75);
+    }
+    [data-theme="schalke"] {
+        --bg-grad: linear-gradient(180deg, #0b1220 0%, #0d1b2a 60%);
+        --card:#0e1730e6; --text:#e6f0ff; --muted:#9db4d6; --primary:#1D71B8;
+        --ok:#10b981; --warn:#f59e0b; --err:#ef4444; --border:#152240; --ring:#60a5fa;
+        --shadow:0 12px 30px rgba(8,20,40,.6); --shadow-lg:0 28px 70px rgba(8,20,40,.8);
+    }
+    [data-theme="frankfurt"] {
+        --bg-grad: linear-gradient(180deg, #0b0b0c 0%, #111113 60%);
+        --card:#0d0d0ff2; --text:#f5f5f5; --muted:#cbd5e1; --primary:#E10600;
+        --ok:#22c55e; --warn:#f59e0b; --err:#ef4444; --border:#202022; --ring:#ef4444;
+        --shadow:0 12px 30px rgba(0,0,0,.6); --shadow-lg:0 28px 70px rgba(0,0,0,.8);
+    }
+
+    /* ###########################################################################
+    # LAYOUT & COMPONENTS                                                    #
+    ########################################################################### 
+    */
+    *, *::before, *::after { box-sizing: border-box; } /* Verhindert Padding-Probleme */
+    html, body { height: 100%; }
+    
+    body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, sans-serif;
+        color: var(--text);
+        background: var(--bg-grad);
+        background-attachment: fixed; /* Hintergrund bleibt beim Scrollen stehen */
+    }
+
+    .shell {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: clamp(16px, 3vw, 28px); /* Responsive Abstände */
+    }
+
+    /* Sticky Header: Bleibt beim Scrollen oben haften ("Glassmorphism") */
+    .topbar {
+        position: sticky; top: 12px; z-index: 20;
+        display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center;
+        padding: 14px 16px;
+        border: 1px solid var(--border);
+        background: var(--card);
+        border-radius: 22px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(10px); /* Der Unschärfe-Effekt hinter der Leiste */
+    }
+
+    .brand h1 { margin: 0; font-size: clamp(16px, 1.8vw, 20px); }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* Button Styling */
+    .btn {
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, var(--card), #ffffff11);
+        color: var(--text);
+        padding: 8px 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        display: inline-flex; align-items: center; gap: 8px;
+        box-shadow: var(--shadow);
+        transition: border-color .1s;
+    }
+    .btn:hover { border-color: var(--ring); }
+    
+    /* Primär-Button hebt sich farblich ab */
+    .btn.primary {
+        background: linear-gradient(135deg, var(--primary), color-mix(in oklab, var(--primary), white 10%));
+        color: #111;
+        border-color: transparent;
+    }
+    [data-theme="dark"] .btn.primary { color: #fff; }
+
+    .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 16px;
+    }
+
+    /* Responsive Grid für die Filter-Inputs */
+    .filters {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Automatische Spalten */
+        gap: 12px;
+        margin: 16px 0;
+    }
+    .filters .field { display: flex; flex-direction: column; gap: 6px; }
+    
+    .filters input, .filters select {
+        padding: 10px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: transparent;
+        color: var(--text);
+    }
+    .filters input:focus, .filters select:focus {
+        outline: none;
+        border-color: var(--ring);
+        box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring), transparent 70%);
+    }
+
+    /* Tabellen Styling */
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
+    th {
+        font-weight: 600; color: var(--muted);
+        text-transform: uppercase; font-size: 12px; letter-spacing: .4px;
+        position: sticky; top: 0; background: var(--card); z-index: 1; /* Sticky Header */
+    }
+    tbody tr:hover { background: rgba(0,0,0,0.02); }
+    [data-theme="dark"] tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+    .spacer { flex: 1 1 auto; } /* Schiebt Inhalte auseinander */
+    .pagination { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    
+    #errorbar {
+        display: none; margin: 12px 0; padding: 10px;
+        border: 1px solid #fecaca; background: #fee2e2; border-radius: 12px; color: #7f1d1d;
+    }
+
+    @media (max-width: 420px) {
+        .actions .btn { flex: 1 1 auto; justify-content: center; }
+    }
+    .muted { color: var(--muted); }
+    </style>
 </head>
 <body>
-  <div class="shell">
+
+<div class="shell">
     <div class="topbar">
-      <div class="brand"><h1>Historie &amp; Datenexport</h1></div>
-      <div class="actions">
-        <button id="btn-theme-light" class="btn" type="button">🌞 Hell</button>
-        <button id="btn-theme-dark" class="btn" type="button">🌙 Dunkel</button>
-        <button id="btn-theme-pink" class="btn" type="button">🌸 Pink</button>
-        <button id="btn-theme-bvb" class="btn" type="button">🟡⚫ BVB</button>
-        <button id="btn-theme-schalke" class="btn" type="button">🔵⚪ Schalke</button>
-        <button id="btn-theme-frankfurt" class="btn" type="button">⚫️🔴 Frankfurt</button>
-        <a href="{% url 'frontend' %}" class="btn">⬅️ Dashboard</a>
-      </div>
+        <div class="brand"><h1>Historie &amp; Datenexport</h1></div>
+        <div class="actions">
+            <button id="btn-theme-light" class="btn" type="button">🌞 Hell</button>
+            <button id="btn-theme-dark" class="btn" type="button">🌙 Dunkel</button>
+            <button id="btn-theme-pink" class="btn" type="button">🌸 Pink</button>
+            <button id="btn-theme-bvb" class="btn" type="button">🟡⚫ BVB</button>
+            <button id="btn-theme-schalke" class="btn" type="button">🔵⚪ Schalke</button>
+            <button id="btn-theme-frankfurt" class="btn" type="button">⚫️🔴 Frankfurt</button>
+            
+            <a href="{% url 'frontend' %}" class="btn">⬅️ Dashboard</a>
+        </div>
     </div>
 
     <div id="errorbar" role="alert"></div>
 
     <div class="card">
-      <div class="toolbar">
-        <div class="count muted" id="lbl-summary">—</div>
-        <div class="spacer"></div>
-        <button id="btn-export" class="btn">📥 CSV exportieren (aktuelle Seite)</button>
-      </div>
+        
+        <div class="toolbar">
+            <div class="count muted" id="lbl-summary">—</div>
+            <div class="spacer"></div>
+            <button id="btn-export" class="btn">📥 CSV exportieren (aktuelle Seite)</button>
+        </div>
 
-      <div class="filters">
-        <div class="field">
-          <label for="sensor">Sensor</label>
-          <select id="sensor"></select>
+        <div class="filters">
+            <div class="field">
+                <label for="sensor">Sensor</label>
+                <select id="sensor"></select> </div>
+            <div class="field">
+                <label for="from">Von (UTC/Zeitstempel)</label>
+                <input id="from" type="datetime-local"/>
+            </div>
+            <div class="field">
+                <label for="to">Bis (UTC/Zeitstempel)</label>
+                <input id="to" type="datetime-local"/>
+            </div>
+            <div class="field">
+                <label for="q">Suche (Name/Slug/Ort/Typ)</label>
+                <input id="q" type="text" placeholder="z. B. Labor, wassertemp"/>
+            </div>
+            <div class="field">
+                <label for="page-size">Zeilen pro Seite</label>
+                <select id="page-size">
+                    <option>25</option><option>50</option><option selected>100</option><option>250</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>&nbsp;</label>
+                <button id="btn-apply" class="btn primary" type="button">🔎 Anwenden</button>
+            </div>
         </div>
-        <div class="field">
-          <label for="from">Von (UTC/Zeitstempel)</label>
-          <input id="from" type="datetime-local"/>
-        </div>
-        <div class="field">
-          <label for="to">Bis (UTC/Zeitstempel)</label>
-          <input id="to" type="datetime-local"/>
-        </div>
-        <div class="field">
-          <label for="q">Suche (Name/Slug/Ort/Typ)</label>
-          <input id="q" type="text" placeholder="z. B. Labor, wassertemp"/>
-        </div>
-        <div class="field">
-          <label for="page-size">Zeilen pro Seite</label>
-          <select id="page-size">
-            <option>25</option><option>50</option><option selected>100</option><option>250</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>&nbsp;</label>
-          <button id="btn-apply" class="btn primary" type="button">🔎 Anwenden</button>
-        </div>
-      </div>
 
-      <div style="overflow:auto; max-height: 65vh;">
-        <table id="tbl">
-          <thead>
-            <tr>
-              <th>Zeitstempel</th>
-              <th>Sensor</th>
-              <th>Temperatur (°C)</th>
-              <th>Luftfeuchte (%)</th>
-              <th>Wassertemperatur (°C)</th>
-              <th>Ort</th>
-              <th>Typ</th>
-            </tr>
-          </thead>
-          <tbody id="tbody">
-            <tr><td colspan="7" class="muted">Lade…</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="toolbar" style="margin-top:12px">
-        <div class="pagination">
-          <button id="btn-prev" class="btn" type="button">⬅️ Zurück</button>
-          <button id="btn-next" class="btn" type="button">➡️ Weiter</button>
+        <div style="overflow:auto; max-height: 65vh;">
+            <table id="tbl">
+                <thead>
+                    <tr>
+                        <th>Zeitstempel</th>
+                        <th>Sensor</th>
+                        <th>Temperatur (°C)</th>
+                        <th>Luftfeuchte (%)</th>
+                        <th>Wassertemperatur (°C)</th>
+                        <th>Ort</th>
+                        <th>Typ</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    <tr><td colspan="7" class="muted">Lade…</td></tr>
+                </tbody>
+            </table>
         </div>
-        <div class="spacer"></div>
-        <div class="count muted" id="lbl-page">Seite — / —</div>
-      </div>
+
+        <div class="toolbar" style="margin-top:12px">
+            <div class="pagination">
+                <button id="btn-prev" class="btn" type="button">⬅️ Zurück</button>
+                <button id="btn-next" class="btn" type="button">➡️ Weiter</button>
+            </div>
+            <div class="spacer"></div>
+            <div class="count muted" id="lbl-page">Seite — / —</div>
+        </div>
     </div>
-  </div>
+</div>
 
-  <script>
-  (function(){
-    'use strict';
+<script>
+/**
+ * ############################################################################
+ * # JAVASCRIPT LOGIK
+ * # Hier passiert die Magie: Daten laden, Tabelle bauen, Themes wechseln.
+ * # Ich kapsle alles in einer IIFE (Immediately Invoked Function Expression),
+ * # damit keine Variablen global "herumliegen".
+ * ############################################################################
+ */
+(function(){
+    'use strict'; // Hilft, sauberen Code zu schreiben (verhindert z.B. unsichere Variablen)
 
-    const $ = (id)=> document.getElementById(id);
-    const on = (el,ev,fn)=> el&&el.addEventListener(ev,fn);
+    // Kleine Helfer, damit ich nicht immer document.getElementById schreiben muss
+    const $ = (id) => document.getElementById(id);
+    const on = (el, ev, fn) => el && el.addEventListener(ev, fn);
 
-    // -------- Theme
-    const THEME_KEY="sd_theme";
-    function applyTheme(t){
-      const allowed=["light","dark","pink","bvb","schalke","frankfurt"];
-      const theme = allowed.includes(t)? t : "light";
-      document.documentElement.setAttribute("data-theme", theme);
-      try{ localStorage.setItem(THEME_KEY, theme);}catch{}
+    // -------------------------------------------------------------------------
+    // THEME MANAGEMENT (Farbschema speichern & laden)
+    // -------------------------------------------------------------------------
+    const THEME_KEY = "sd_theme";
+    
+    function applyTheme(t) {
+        const allowed = ["light", "dark", "pink", "bvb", "schalke", "frankfurt"];
+        // Falls ein ungültiges Theme kommt, falle ich auf 'light' zurück
+        const theme = allowed.includes(t) ? t : "light";
+        
+        // Ich setze das Attribut am <html> Tag -> CSS reagiert sofort darauf
+        document.documentElement.setAttribute("data-theme", theme);
+        try { localStorage.setItem(THEME_KEY, theme); } catch {}
     }
-    function initTheme(){
-      const t = (localStorage.getItem(THEME_KEY)) || (matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
-      applyTheme(t);
-      on($('btn-theme-light'),'click',()=>applyTheme('light'));
-      on($('btn-theme-dark'),'click',()=>applyTheme('dark'));
-      on($('btn-theme-pink'),'click',()=>applyTheme('pink'));
-      on($('btn-theme-bvb'),'click',()=>applyTheme('bvb'));
-      on($('btn-theme-schalke'),'click',()=>applyTheme('schalke'));
-      on($('btn-theme-frankfurt'),'click',()=>applyTheme('frankfurt'));
+
+    function initTheme() {
+        // Ich schaue im Browser-Speicher nach ODER prüfe die Systemeinstellung (Darkmode bevorzugt?)
+        const t = (localStorage.getItem(THEME_KEY)) || 
+                  (matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        applyTheme(t);
+
+        // Events für die Buttons oben rechts
+        on($('btn-theme-light'), 'click', () => applyTheme('light'));
+        on($('btn-theme-dark'),  'click', () => applyTheme('dark'));
+        on($('btn-theme-pink'),  'click', () => applyTheme('pink'));
+        on($('btn-theme-bvb'),   'click', () => applyTheme('bvb'));
+        on($('btn-theme-schalke'),'click',() => applyTheme('schalke'));
+        on($('btn-theme-frankfurt'),'click',()=> applyTheme('frankfurt'));
     }
 
-    // -------- Defaults/State
+    // -------------------------------------------------------------------------
+    // STATUS & KONFIGURATION
+    // -------------------------------------------------------------------------
     const DEFAULTS = {
-      apiBase: window.location.origin,
-      epSensors: "/api/sensors",
-      epReadings: "/api/readings",
-      pageSize: 100
+        apiBase: window.location.origin, // Wo läuft das Backend? (Hier: gleicher Server)
+        epSensors: "/api/sensors",       // Endpunkt für Sensor-Liste
+        epReadings: "/api/readings",     // Endpunkt für Messwerte
+        pageSize: 100
     };
+
+    // 'state' ist meine einzige Wahrheitsquelle ("Single Source of Truth") für die UI
     const state = {
-      sensor: "",
-      from: "",
-      to: "",
-      q: "",
-      page: 1,
-      page_size: DEFAULTS.pageSize,
-      total: 0,
-      has_next: false,
-      has_prev: false,
-      rows: []
+        sensor: "",
+        from: "",
+        to: "",
+        q: "",
+        page: 1,
+        page_size: DEFAULTS.pageSize,
+        total: 0,
+        has_next: false,
+        has_prev: false,
+        rows: [] // Hier landen die geladenen Daten
     };
 
-    // -------- Utils
-    function showError(msg){
-      const eb=$('errorbar'); if(!eb) return;
-      eb.style.display='block';
-      eb.textContent = msg;
-      console.error('[Historie]', msg);
-    }
-    function buildUrl(ep){
-      const base=(DEFAULTS.apiBase||window.location.origin).replace(/\/+$/,"");
-      return ep.startsWith('/')? base+ep : base+'/'+ep;
+    // -------------------------------------------------------------------------
+    // HILFSFUNKTIONEN
+    // -------------------------------------------------------------------------
+    function showError(msg) {
+        const eb = $('errorbar'); if (!eb) return;
+        eb.style.display = 'block';
+        eb.textContent = msg;
+        console.error('[Historie]', msg);
     }
 
-    // -------- Sensor-Liste (robust)
+    function buildUrl(ep) {
+        // Baut eine saubere URL, egal ob apiBase einen Slash am Ende hat oder nicht
+        const base = (DEFAULTS.apiBase || window.location.origin).replace(/\/+$/, "");
+        return ep.startsWith('/') ? base + ep : base + '/' + ep;
+    }
+
+    // -------------------------------------------------------------------------
+    // LOGIK: SENSOREN LADEN
+    // -------------------------------------------------------------------------
+    
+    // FALLBACK: Wenn der Endpunkt /api/sensors kaputt ist, versuche ich
+    // die Sensoren "live" aus den vorhandenen Messwerten zu erraten.
     async function fallbackPopulateSensorsFromReadings() {
-      const sel = $('sensor');
-      try{
-        const url = buildUrl(DEFAULTS.epReadings) + "?page=1&page_size=500&t=" + Date.now();
-        const r = await fetch(url, {credentials:'include', cache:'no-store'});
-        if(!r.ok) throw new Error('Readings HTTP '+r.status);
-        const data = await r.json();
-        const set = new Set((data.results||[]).map(x => x.sensor).filter(Boolean));
-        if(set.size === 0) return;
+        const sel = $('sensor');
+        try {
+            // Ich hole mir einfach die ersten 500 Messwerte
+            const url = buildUrl(DEFAULTS.epReadings) + "?page=1&page_size=500&t=" + Date.now();
+            const r = await fetch(url, {credentials: 'include', cache: 'no-store'});
+            if (!r.ok) throw new Error('Readings HTTP ' + r.status);
+            
+            const data = await r.json();
+            // Ich sammle alle 'sensor'-Namen in einem Set (verhindert Duplikate automatisch)
+            const set = new Set((data.results || []).map(x => x.sensor).filter(Boolean));
+            
+            if (set.size === 0) return;
+            
+            sel.innerHTML = "";
+            const optAll = document.createElement('option');
+            optAll.value = ""; optAll.textContent = "— Alle —";
+            sel.appendChild(optAll);
+
+            Array.from(set).sort().forEach(slug => {
+                const o = document.createElement('option');
+                o.value = slug; o.textContent = slug;
+                sel.appendChild(o);
+            });
+        } catch (e) {
+            console.warn('Auch Fallback fehlgeschlagen:', e);
+        }
+    }
+
+    async function loadSensors() {
+        const sel = $('sensor');
         sel.innerHTML = "";
         const optAll = document.createElement('option');
         optAll.value = ""; optAll.textContent = "— Alle —";
         sel.appendChild(optAll);
-        Array.from(set).sort().forEach(slug=>{
-          const o=document.createElement('option');
-          o.value=slug; o.textContent=slug;
-          sel.appendChild(o);
-        });
-      }catch(e){
-        console.warn('Fallback /api/readings fehlgeschlagen:', e);
-      }
-    }
 
-    async function loadSensors(){
-      const sel = $('sensor');
-      // Basisoption
-      sel.innerHTML = "";
-      const optAll = document.createElement('option');
-      optAll.value=""; optAll.textContent="— Alle —";
-      sel.appendChild(optAll);
-
-      try{
-        const url = buildUrl(DEFAULTS.epSensors) + "?t=" + Date.now(); // Cache-Buster
-        const r = await fetch(url, {credentials:'include', cache:'no-store'});
-        if(!r.ok) throw new Error('Sensors HTTP '+r.status);
-        const data = await r.json();
-
-        if(Array.isArray(data) && data.length){
-          data.forEach(s=>{
-            const o=document.createElement('option');
-            o.value = s.slug;
-            o.textContent = s.slug + (s.name ? ` — ${s.name}` : "");
-            sel.appendChild(o);
-          });
-        } else {
-          await fallbackPopulateSensorsFromReadings();
+        try {
+            // Ich hänge t=Date.now() an, um aggressives Browser-Caching zu verhindern
+            const url = buildUrl(DEFAULTS.epSensors) + "?t=" + Date.now();
+            const r = await fetch(url, {credentials: 'include', cache: 'no-store'});
+            if (!r.ok) throw new Error('Sensors HTTP ' + r.status);
+            
+            const data = await r.json();
+            if (Array.isArray(data) && data.length) {
+                data.forEach(s => {
+                    const o = document.createElement('option');
+                    o.value = s.slug;
+                    // Wenn ein Name existiert, zeige ich ihn an, sonst nur den Slug (ID)
+                    o.textContent = s.slug + (s.name ? ` — ${s.name}` : "");
+                    sel.appendChild(o);
+                });
+            } else {
+                // Keine Sensoren definiert? Dann probiere ich den Fallback
+                await fallbackPopulateSensorsFromReadings();
+            }
+        } catch (e) {
+            showError('Sensorliste nicht verfügbar: ' + e.message);
+            await fallbackPopulateSensorsFromReadings();
         }
-      }catch(e){
-        showError('Sensorliste nicht verfügbar: '+e.message);
-        await fallbackPopulateSensorsFromReadings();
-      }
     }
 
-    // -------- Readings
-    let currentAbort = null;
-    async function loadReadings(){
-      try{
-        // evtl. laufende Anfrage abbrechen (bei schnellem Paginieren)
-        if(currentAbort) currentAbort.abort();
-        currentAbort = new AbortController();
+    // -------------------------------------------------------------------------
+    // LOGIK: MESSWERTE LADEN (READINGS)
+    // -------------------------------------------------------------------------
+    let currentAbort = null; // Speichert den Controller für den aktuellen Request
 
-        const tbody=$('tbody'); tbody.innerHTML = `<tr><td colspan="7" class="muted">Lade…</td></tr>`;
-        const p = new URLSearchParams();
-        if(state.sensor) p.set('sensor', state.sensor);
-        if(state.from)   p.set('from',   new Date(state.from).toISOString());
-        if(state.to)     p.set('to',     new Date(state.to).toISOString());
-        if(state.q)      p.set('q',      state.q);
-        p.set('page', state.page);
-        p.set('page_size', state.page_size);
-        p.set('t', Date.now()); // Cache-Buster
+    async function loadReadings() {
+        try {
+            // PERFORMANCE: Wenn der Nutzer wild klickt, breche ich den VORHERIGEN
+            // Request ab, damit wir nicht auf veraltete Daten warten.
+            if (currentAbort) currentAbort.abort();
+            currentAbort = new AbortController();
 
-        const url = buildUrl(DEFAULTS.epReadings) + '?' + p.toString();
-        const r = await fetch(url, {credentials:'include', cache:'no-store', signal: currentAbort.signal});
-        if(!r.ok) throw new Error('Readings HTTP '+r.status);
-        const data = await r.json();
+            const tbody = $('tbody');
+            tbody.innerHTML = `<tr><td colspan="7" class="muted">Lade…</td></tr>`;
 
-        state.rows = data.results || [];
-        state.page = data.page || 1;
-        state.page_size = data.page_size || state.page_size;
-        state.total = data.total || state.rows.length;
-        state.has_next = !!data.has_next;
-        state.has_prev = !!data.has_prev;
+            // Ich baue die Query-Parameter zusammen
+            const p = new URLSearchParams();
+            if (state.sensor) p.set('sensor', state.sensor);
+            if (state.from)   p.set('from',   new Date(state.from).toISOString());
+            if (state.to)     p.set('to',     new Date(state.to).toISOString());
+            if (state.q)      p.set('q',      state.q);
+            p.set('page', state.page);
+            p.set('page_size', state.page_size);
+            p.set('t', Date.now());
 
-        renderTable();
-        renderSummary();
-      }catch(e){
-        if(e.name === 'AbortError') return;
-        showError('Datenabruf fehlgeschlagen: '+e.message);
-      }
+            const url = buildUrl(DEFAULTS.epReadings) + '?' + p.toString();
+            
+            // Der eigentliche API-Aufruf
+            const r = await fetch(url, {
+                credentials: 'include', 
+                cache: 'no-store', 
+                signal: currentAbort.signal // Hier übergebe ich das Abbruch-Signal
+            });
+
+            if (!r.ok) throw new Error('Readings HTTP ' + r.status);
+            const data = await r.json();
+
+            // State aktualisieren
+            state.rows = data.results || [];
+            state.page = data.page || 1;
+            state.page_size = data.page_size || state.page_size;
+            state.total = data.total || state.rows.length;
+            state.has_next = !!data.has_next;
+            state.has_prev = !!data.has_prev;
+
+            renderTable();
+            renderSummary();
+        } catch (e) {
+            // AbortError ist kein echter Fehler, sondern gewolltes Verhalten
+            if (e.name === 'AbortError') return;
+            showError('Datenabruf fehlgeschlagen: ' + e.message);
+        }
     }
 
-    function renderTable(){
-      const tbody=$('tbody');
-      if(!state.rows.length){
-        tbody.innerHTML = `<tr><td colspan="7" class="muted">Keine Daten im Zeitraum/Filter.</td></tr>`;
-        $('lbl-page').textContent = `Seite ${state.page} / ?`;
-        return;
-      }
-      const frag = document.createDocumentFragment();
-      state.rows.forEach(row=>{
-        const tr = document.createElement('tr');
-        const ts = row.timestamp ? new Date(row.timestamp).toLocaleString('de-DE') : '—';
-        const sensor = row.sensor || '—';
-        const temp = (row.temperature ?? row.temp ?? null);
-        const hum = (row.humidity ?? row.hum ?? null);
-        const wtemp = (row.water_temperature ?? row.wtemp ?? null);
-        const loc = row.location ?? row.place ?? '—';
-        const typ = row.type ?? '—';
-        tr.innerHTML = `
-          <td>${ts}</td>
-          <td>${sensor}</td>
-          <td>${temp==null?'—':Number(temp).toFixed(2)}</td>
-          <td>${hum==null?'—':Number(hum).toFixed(0)}</td>
-          <td>${wtemp==null?'—':Number(wtemp).toFixed(2)}</td>
-          <td>${loc}</td>
-          <td>${typ}</td>
-        `;
-        frag.appendChild(tr);
-      });
-      tbody.innerHTML=""; tbody.appendChild(frag);
+    function renderTable() {
+        const tbody = $('tbody');
+        if (!state.rows.length) {
+            tbody.innerHTML = `<tr><td colspan="7" class="muted">Keine Daten im Zeitraum/Filter.</td></tr>`;
+            $('lbl-page').textContent = `Seite ${state.page} / ?`;
+            return;
+        }
 
-      const pages = state.total && state.page_size ? Math.ceil(state.total/state.page_size) : (state.has_next || state.has_prev ? '…' : '1');
-      $('lbl-page').textContent = `Seite ${state.page} / ${pages}`;
-      $('btn-prev').disabled = !state.has_prev && state.page<=1;
-      $('btn-next').disabled = !state.has_next && !(state.total > state.page*state.page_size);
+        // PERFORMANCE: DocumentFragment ist wie ein virtueller Zwischenspeicher.
+        // Ich baue die Tabelle darin auf und füge sie erst ganz am Ende ins DOM ein.
+        // Das ist viel schneller als jede Zeile einzeln einzufügen.
+        const frag = document.createDocumentFragment();
+        
+        state.rows.forEach(row => {
+            const tr = document.createElement('tr');
+            
+            // Sichere Datenaufbereitung (Null-Checks)
+            const ts = row.timestamp ? new Date(row.timestamp).toLocaleString('de-DE') : '—';
+            const sensor = row.sensor || '—';
+            const temp = (row.temperature ?? row.temp ?? null);
+            const hum = (row.humidity ?? row.hum ?? null);
+            const wtemp = (row.water_temperature ?? row.wtemp ?? null);
+            const loc = row.location ?? row.place ?? '—';
+            const typ = row.type ?? '—';
+
+            tr.innerHTML = `
+              <td>${ts}</td>
+              <td>${sensor}</td>
+              <td>${temp == null ? '—' : Number(temp).toFixed(2)}</td>
+              <td>${hum == null ? '—' : Number(hum).toFixed(0)}</td>
+              <td>${wtemp == null ? '—' : Number(wtemp).toFixed(2)}</td>
+              <td>${loc}</td>
+              <td>${typ}</td>
+            `;
+            frag.appendChild(tr);
+        });
+
+        tbody.innerHTML = "";
+        tbody.appendChild(frag); // Nur EIN Reflow im Browser!
+
+        // Paginierung berechnen
+        const pages = state.total && state.page_size 
+            ? Math.ceil(state.total / state.page_size) 
+            : (state.has_next || state.has_prev ? '…' : '1');
+            
+        $('lbl-page').textContent = `Seite ${state.page} / ${pages}`;
+        $('btn-prev').disabled = !state.has_prev && state.page <= 1;
+        $('btn-next').disabled = !state.has_next && !(state.total > state.page * state.page_size);
     }
 
-    function renderSummary(){
-      const startIdx = (state.page-1)*state.page_size + 1;
-      const endIdx = Math.min(state.page*state.page_size, state.total || startIdx + state.rows.length - 1);
-      const rangeTxt = state.total ? `${startIdx}–${endIdx} von ${state.total}` : `${state.rows.length} Zeilen`;
-      $('lbl-summary').textContent = `Aktuelle Ansicht: ${rangeTxt}`;
+    function renderSummary() {
+        const startIdx = (state.page - 1) * state.page_size + 1;
+        const endIdx = Math.min(state.page * state.page_size, state.total || startIdx + state.rows.length - 1);
+        const rangeTxt = state.total ? `${startIdx}–${endIdx} von ${state.total}` : `${state.rows.length} Zeilen`;
+        $('lbl-summary').textContent = `Aktuelle Ansicht: ${rangeTxt}`;
     }
 
-    function exportCSVCurrent(){
-      const headers = ["timestamp","sensor","temperature","humidity","water_temperature","location","type"];
-      const rows = state.rows.map(r => [
-        r.timestamp || "",
-        r.sensor || "",
-        (r.temperature ?? r.temp ?? ""),
-        (r.humidity ?? r.hum ?? ""),
-        (r.water_temperature ?? r.wtemp ?? ""),
-        (r.location ?? r.place ?? ""),
-        (r.type ?? "")
-      ]);
-      const out = [headers].concat(rows).map(arr => arr.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-      const blob = new Blob([out], {type:'text/csv;charset=utf-8;'});
-      const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-      a.download = `readings_page${state.page}_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
-      a.click();
+    // -------------------------------------------------------------------------
+    // CLIENT-SIDE CSV EXPORT
+    // -------------------------------------------------------------------------
+    function exportCSVCurrent() {
+        // Ich erstelle die CSV direkt im Browser, ohne Backend-Aufruf.
+        const headers = ["timestamp","sensor","temperature","humidity","water_temperature","location","type"];
+        
+        const rows = state.rows.map(r => [
+            r.timestamp || "",
+            r.sensor || "",
+            (r.temperature ?? r.temp ?? ""),
+            (r.humidity ?? r.hum ?? ""),
+            (r.water_temperature ?? r.wtemp ?? ""),
+            (r.location ?? r.place ?? ""),
+            (r.type ?? "")
+        ]);
+
+        // CSV-Formatierung: Anführungszeichen escapen (" -> "")
+        const out = [headers].concat(rows)
+            .map(arr => arr.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))
+            .join('\n');
+
+        // Ich erzeuge eine virtuelle Datei (Blob) und klicke sie programmgesteuert an
+        const blob = new Blob([out], {type: 'text/csv;charset=utf-8;'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `readings_page${state.page}_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
+        a.click();
     }
 
-    // -------- UI
-    function wireUI(){
-      initTheme();
+    // -------------------------------------------------------------------------
+    // INITIALISIERUNG & EVENT LISTENER
+    // -------------------------------------------------------------------------
+    function wireUI() {
+        initTheme();
 
-      // Sensorliste & Default-Zeitraum (letzte 24h)
-      loadSensors().then(()=>{
-        const usp = new URLSearchParams(location.search);
-        state.sensor = usp.get('sensor') || "";
-        if(state.sensor) $('sensor').value = state.sensor;
+        // Schritt 1: Sensoren laden
+        loadSensors().then(() => {
+            // URL Parameter auslesen (damit Bookmarks funktionieren)
+            const usp = new URLSearchParams(location.search);
+            state.sensor = usp.get('sensor') || "";
+            if (state.sensor) $('sensor').value = state.sensor;
 
-        const now = new Date();
-        const fromDef = new Date(now.getTime()-24*60*60*1000);
-        $('from').value = (usp.get('from') || fromDef.toISOString().slice(0,16));
-        $('to').value   = (usp.get('to')   || now.toISOString().slice(0,16));
-        $('q').value = usp.get('q') || "";
-        $('page-size').value = usp.get('page_size') || String(state.page_size);
+            // Default: Letzte 24 Stunden
+            const now = new Date();
+            const fromDef = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            
+            // Ich fülle die Inputs vor
+            $('from').value = (usp.get('from') || fromDef.toISOString().slice(0, 16));
+            $('to').value   = (usp.get('to')   || now.toISOString().slice(0, 16));
+            $('q').value    = usp.get('q') || "";
+            $('page-size').value = usp.get('page_size') || String(state.page_size);
 
-        state.from = $('from').value;
-        state.to   = $('to').value;
-        state.q    = $('q').value;
-        state.page_size = Number($('page-size').value) || state.page_size;
+            // State synchronisieren
+            state.from = $('from').value;
+            state.to   = $('to').value;
+            state.q    = $('q').value;
+            state.page_size = Number($('page-size').value) || state.page_size;
 
-        loadReadings();
-      });
+            // Schritt 2: Daten laden
+            loadReadings();
+        });
 
-      on($('btn-apply'),'click', ()=>{
-        state.sensor = $('sensor').value || "";
-        state.from = $('from').value || "";
-        state.to   = $('to').value   || "";
-        state.q    = $('q').value    || "";
-        state.page = 1;
-        state.page_size = Number($('page-size').value) || state.page_size;
+        // Klick auf "Anwenden"
+        on($('btn-apply'), 'click', () => {
+            state.sensor = $('sensor').value || "";
+            state.from = $('from').value || "";
+            state.to   = $('to').value   || "";
+            state.q    = $('q').value    || "";
+            state.page = 1; // Filter geändert -> zurück auf Seite 1
+            state.page_size = Number($('page-size').value) || state.page_size;
 
-        const usp = new URLSearchParams();
-        if(state.sensor) usp.set('sensor', state.sensor);
-        if(state.from)   usp.set('from', state.from);
-        if(state.to)     usp.set('to',   state.to);
-        if(state.q)      usp.set('q',    state.q);
-        usp.set('page_size', state.page_size);
-        history.replaceState(null, '', location.pathname + '?' + usp.toString());
+            // URL in der Adresszeile aktualisieren (ohne Reload)
+            const usp = new URLSearchParams();
+            if (state.sensor) usp.set('sensor', state.sensor);
+            if (state.from)   usp.set('from', state.from);
+            if (state.to)     usp.set('to',   state.to);
+            if (state.q)      usp.set('q',    state.q);
+            usp.set('page_size', state.page_size);
+            history.replaceState(null, '', location.pathname + '?' + usp.toString());
 
-        loadReadings();
-      });
+            loadReadings();
+        });
 
-      on($('btn-prev'),'click', ()=>{ if(state.page>1){ state.page--; loadReadings(); } });
-      on($('btn-next'),'click', ()=>{ state.page++; loadReadings(); });
+        // Pagination Buttons
+        on($('btn-prev'), 'click', () => { 
+            if (state.page > 1) { state.page--; loadReadings(); } 
+        });
+        on($('btn-next'), 'click', () => { 
+            state.page++; loadReadings(); 
+        });
 
-      on($('btn-export'),'click', exportCSVCurrent);
+        on($('btn-export'), 'click', exportCSVCurrent);
 
-      // Debounced Search
-      let t=null;
-      on($('q'),'input', ()=>{
-        clearTimeout(t);
-        t=setTimeout(()=> $('btn-apply').click(), 350);
-      });
+        // "Debounced" Suche: Wartet 350ms nach dem Tippen, bevor gesucht wird.
+        // Das entlastet den Server enorm!
+        let t = null;
+        on($('q'), 'input', () => {
+            clearTimeout(t);
+            t = setTimeout(() => $('btn-apply').click(), 350);
+        });
     }
 
+    // Alles bereit? Los geht's!
     wireUI();
-  })();
-  </script>
+})();
+</script>
 </body>
 </html>
